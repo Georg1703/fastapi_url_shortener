@@ -1,0 +1,10 @@
+htmlcov
+.venv
+/pytest
+.venv
+.mypy_cache
+__pycache__
+.env
+.coverage
+.ruff_cache
+.pytest_cache
