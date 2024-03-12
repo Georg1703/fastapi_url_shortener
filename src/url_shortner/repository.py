@@ -13,7 +13,7 @@ async def save_new_link(db_session: AsyncSession, original_url: UrlAlias, shortc
 
     new_link = Link(
         original_url=str(original_url),
-        short_url=shortcode,
+        shortcode=shortcode,
         last_redirected_at=datetime.now(timezone.utc)
     )
     db_session.add(new_link)

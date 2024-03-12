@@ -9,26 +9,46 @@ services:
     ports:
       - "8000:80"
     depends_on:
-      db:
+      database:
         condition: service_healthy
     volumes:
       - .:/code
 
-  db:
-    container_name: fastapi_postgres_container
+  database:
+    container_name: database
+    restart: unless-stopped
     image: postgres:latest
+    volumes:
+      - default_database_data:/var/lib/postgresql/data
+    environment:
+        - POSTGRES_DB=${DEFAULT_DATABASE_DB}
+        - POSTGRES_USER=${DEFAULT_DATABASE_USER}
+        - POSTGRES_PASSWORD=${DEFAULT_DATABASE_PASSWORD}
     env_file:
       - .env
     ports:
-      - 5432:5432
+      - "30440:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 3s
       timeout: 3s
       retries: 30
+
+  test_database:
+    container_name: test_database
+    restart: unless-stopped
+    image: postgres:latest
     volumes:
-      - ./scripts/db_init.sh:/docker-entrypoint-initdb.d/db_init.sh 
-      - pgdata:/var/lib/postgresql/data
+      - test_database_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${TEST_DATABASE_DB}
+      - POSTGRES_USER=${TEST_DATABASE_USER}
+      - POSTGRES_PASSWORD=${TEST_DATABASE_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "30442:5432"
+
 volumes:
-  pgdata:
-    driver: local
+  test_database_data:
+  default_database_data:

@@ -18,5 +18,5 @@ async def get_non_existing_shortcode(db_session: AsyncSession) -> ShortCodeAlias
 
     while True:
         shortcode = generate_alphanum_code()
-        if not await get_first_link(db_session, {'short_url': shortcode}):
+        if not await get_first_link(db_session, {'shortcode': shortcode}):
             return shortcode

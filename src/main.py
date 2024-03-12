@@ -8,19 +8,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .url_shortner.routes import router as url_shortner
 from .url_shortner.models import Link  # noqa
-from src.database import sessionmanager
+from src.database import init_db
 from .config import settings
-
-
-sessionmanager.init(settings.DATABASE_URL)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with sessionmanager.connect() as conn:
-        await sessionmanager.create_all(conn)
+    await init_db()
     yield
-    if sessionmanager._engine is not None:
-        await sessionmanager.close()
 
 app = FastAPI(lifespan=lifespan, title=settings.PROJECT_NAME)
 app.include_router(url_shortner, prefix="", tags=["URL shortner"])
